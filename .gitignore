@@ -1,0 +1,23 @@
+*.pyc
+*.pyo
+.idea
+.vscode
+.DS_Store*
+cmake-build-debug/
+
+statistic
+logs
+upload_xls
+test/local_config.py
+test/local_config_back.py
+dump.rdb
+
+doc/_book/
+
+# 长连日志
+long_connection_server/log/
+long_connection_server/battle/cocos2d_unittest
+long_connection_server/battle/gtest-all.o
+long_connection_server/battle/gtest_main.a
+long_connection_server/battle/gtest_main.o
+long_connection_server/battle/zcAStar_unittest
