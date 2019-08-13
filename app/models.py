@@ -11,15 +11,20 @@ class Category(models.Model):
     pub_date = models.DateTimeField('发布时间', auto_now_add=True)
     order = models.IntegerField('排列顺序-升序')
     book = models.ForeignKey('Book', verbose_name='所属手册', on_delete=models.CASCADE)
+    is_valid = models.IntegerField('是否审核通过', choices=((1, '审核通过'), (0, '未审核')), default=0)
 
     def __str__(self):
         return self.name
+
+
 
     class Meta:
         verbose_name = '目录'
         verbose_name_plural = '目录'
         ordering = ['order']
-
+        permissions = [
+                    ("valid_category", "可以审核"),
+                ]
 
 class Book(models.Model):
     name = models.CharField('手册', max_length=70)
@@ -36,13 +41,23 @@ class Book(models.Model):
 
     def get_all_cate(self):
         category_set = self.category_set.all()
-        data = {}
+        data = []
         for x in category_set:
-            tmp = {'name': x.name, 'son': {}, 'id': x.id, 'order_id': x.order}
-            while x.farther:
-                tmp = {'name': x.name, 'son': tmp, 'id': x.id, 'order_id': x.order}
-                x = x.farther
-            data[x.name] = tmp
+            if x.farther:
+                continue
+            son = self.find_son(x, category_set)
+            tmp = {'name': x.name, 'son': son, 'id': x.id, 'order_id': x.order, 'is_valid': x.is_valid,
+                   'pub_date': x.pub_date}
+            data.append(tmp)
+        return data
+
+    def find_son(self, cate_obj, all_cate_set):
+        data = []
+        for x in all_cate_set:
+            if cate_obj.id == x.farther_id:
+                son = self.find_son(x, all_cate_set)
+                data.append({'name': x.name, 'son': son, 'id': x.id, 'order_id': x.order, 'is_valid': x.is_valid,
+                             'pub_date': x.pub_date})
         return data
 
 

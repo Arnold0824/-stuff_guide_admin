@@ -1,10 +1,15 @@
 # Register your models here.
 from django.contrib.admin import register, ModelAdmin
 from app.models import *
-from app.admin_site import admin_site
+from django.contrib.auth import get_permission_codename
+from django.contrib import admin
+from django.http import HttpResponseRedirect
+from django.contrib.contenttypes.models import ContentType
 
+def add_content(modeladmin, request, queryset):
+    return HttpResponseRedirect("/app/content/add/")
 
-@register(Content, site=admin_site)
+@register(Content)
 class ContentAdmin(ModelAdmin):
     list_display = ('headline', 'cate', 'book_of_cate', 'pub_date')
 
@@ -16,18 +21,40 @@ class ContentAdmin(ModelAdmin):
     raw_id_fields = ("cate",)
 
 
-@register(Category, site=admin_site)
+@register(Category)
 class CategoryAdmin(ModelAdmin):
-    list_display = ('name', 'book_of_cate', 'pub_date')
+    list_display = ('name', 'book_of_cate', 'pub_date','content', 'is_valid')
+    def content(self,obj):
+        content_name = obj.content_set.all()
+        if content_name:
+            content_name = content_name[0]
+        else:
+            content_name = '暂无详细内容'
+        return ("%s" % (content_name))
 
     def book_of_cate(self, obj):
         return ("%s" % (obj.book.name))
 
+    def make_published(self, request, queryset):
+        queryset.update(is_valid=1)
+        self.message_user(request, "成功审核")
+
+    def has_valid_permission(self, request):
+        """Does the user have the valid permission?"""
+        opts = self.opts
+        codename = get_permission_codename('valid', opts)
+        return request.user.has_perm('%s.%s' % (opts.app_label, codename))
+
+    list_editable = ['is_valid']
+    exclude = ('is_valid',)
+    actions = ['make_published']
     search_fields = ['name', 'id']
     book_of_cate.short_description = '手册名'
+    make_published.short_description = "批量审核"
+    make_published.allowed_permissions = ('valid',)
 
 
-@register(Book, site=admin_site)
+@register(Book)
 class BookAdmin(ModelAdmin):
     list_display = ('name', 'cates', 'cate_num', 'pub_date')
     search_fields = ['name', 'id']
@@ -43,4 +70,8 @@ class BookAdmin(ModelAdmin):
     cate_num.short_description = '目录内容数'
 
 
-admin_site.register(Tag)
+admin.site.register(Tag)
+admin.AdminSite.site_header = "员工手册管理"
+admin.AdminSite.site_title = "员工手册管理"
+
+# register(User)

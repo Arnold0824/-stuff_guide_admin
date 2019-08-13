@@ -15,13 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from app.admin import admin_site
 from django.conf import settings
 from django.conf.urls.static import static
 from app import views
 
 urlpatterns = [
-    path('', admin_site.urls),
+    # path('', admin_site.urls),
+    path('', admin.site.urls),
     path('api/book/', views.BookView.as_view()),
     path('api/content/', views.ContentView.as_view()),
     path('ckeditor/', include('ckeditor_uploader.urls')),
