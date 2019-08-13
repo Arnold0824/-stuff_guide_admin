@@ -16,6 +16,7 @@ class BookView(View):
             for x in Book.objects.all():
                 data.append({
                     'book_id': x.id,
+                    'name': x.name,
                     'cover_img': x.cover_img.name,
                     'pub_date': x.pub_date,
                     'all_cate': x.get_all_cate(),
@@ -28,6 +29,7 @@ class BookView(View):
             return Http404
         data = {
             'book_id': book_id,
+            'name': book_obj.name,
             'cover_img': book_obj.cover_img.name,
             'pub_date': book_obj.pub_date,
             'all_cate': book_obj.get_all_cate(),
