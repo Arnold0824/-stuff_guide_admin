@@ -10,18 +10,29 @@ from app.models import *
 class BookView(View):
     def get(self, request):
         params = request.GET
-        book_id = int(params.get('book_id'))
+        book_id = int(params.get('book_id', 0))
+        if not book_id:
+            data = []
+            for x in Book.objects.all():
+                data.append({
+                    'book_id': x.id,
+                    'cover_img': x.cover_img.name,
+                    'pub_date': x.pub_date,
+                    'all_cate': x.get_all_cate(),
+                    # ''
+                })
         book_obj = Book.objects.get(id=book_id)
         if not book_obj:
             return Http404
         data = {
             'book_id': book_id,
-            'cover_img':book_obj.cover_img.name,
+            'cover_img': book_obj.cover_img.name,
             'pub_date': book_obj.pub_date,
             'all_cate': book_obj.get_all_cate(),
             # ''
         }
-        return JsonResponse(data,json_dumps_params={'ensure_ascii':False})
+        return JsonResponse(data, json_dumps_params={'ensure_ascii': False})
+
 
 class ContentView(View):
     def get(self, request):
@@ -34,4 +45,3 @@ class ContentView(View):
             'pub_date': content_obj.pub_date,
         }
         return JsonResponse(data)
-
