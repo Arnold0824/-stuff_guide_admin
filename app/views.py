@@ -21,6 +21,8 @@ class BookView(View):
                     'all_cate': x.get_all_cate(),
                     # ''
                 })
+            return JsonResponse(data, json_dumps_params={'ensure_ascii': False},safe=False)
+
         book_obj = Book.objects.get(id=book_id)
         if not book_obj:
             return Http404
