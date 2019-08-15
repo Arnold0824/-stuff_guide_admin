@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.views import View
 from django.views.generic import ListView
 from app.models import *
-
+from django.db.models import Q
 
 # Create your views here.
 
@@ -42,10 +42,31 @@ class ContentView(View):
     def get(self, request):
         params = request.GET
         cate_id = int(params.get('cate_id'))
-        content_obj = Content.objects.get(cate_id__exact=cate_id)
-        data = {
-            'content': content_obj.content,
-            'headline': content_obj.headline,
-            'pub_date': content_obj.pub_date,
-        }
+        content_obj = Content.objects.filter(cate_id__exact=cate_id)
+        if not content_obj:
+            data = {'status':-1,
+                    'content':'',
+                    'headline':'',
+                    'pub_date':''}
+        else:
+            data = {
+                'content': content_obj.content,
+                'headline': content_obj.headline,
+                'pub_date': content_obj.pub_date,
+                'status':1
+            }
         return JsonResponse(data)
+
+class SearchView(View):
+    def get(self,request):
+        params = request.GET
+        kw = params.get('kw')
+        cate_obj = Category.objects.filter(Q(name__contains=kw)|Q(id__contains=kw))
+        data = []
+        for x in cate_obj:
+            data.append({
+                'cate_id': x.id,
+                'name': x.name,
+                'pub_date': x.pub_date,
+            })
+        return JsonResponse(data,safe=False)

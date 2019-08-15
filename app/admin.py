@@ -39,6 +39,10 @@ class CategoryAdmin(ModelAdmin):
         queryset.update(is_valid=1)
         self.message_user(request, "成功审核")
 
+    def make_unpublished(self, request, queryset):
+        queryset.update(is_valid=0)
+        self.message_user(request, "成功取消审核")
+
     def has_valid_permission(self, request):
         """Does the user have the valid permission?"""
         opts = self.opts
@@ -51,11 +55,13 @@ class CategoryAdmin(ModelAdmin):
 
     # list_editable = ['is_valid']
     exclude = ('is_valid',)
-    actions = ['make_published']
+    actions = ['make_published','make_unpublished']
     search_fields = ['name', 'id']
     book_of_cate.short_description = '手册名'
     make_published.short_description = "批量审核"
     make_published.allowed_permissions = ('valid',)
+    make_unpublished.allowed_permissions = ('valid',)
+    make_unpublished.short_description = "批量取消审核"
 
 
 @register(Book)

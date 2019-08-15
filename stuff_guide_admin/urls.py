@@ -24,6 +24,7 @@ urlpatterns = [
     path('', admin.site.urls),
     path('api/book/', views.BookView.as_view()),
     path('api/content/', views.ContentView.as_view()),
+    path('api/search/', views.SearchView.as_view()),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
