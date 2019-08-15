@@ -45,7 +45,11 @@ class CategoryAdmin(ModelAdmin):
         codename = get_permission_codename('valid', opts)
         return request.user.has_perm('%s.%s' % (opts.app_label, codename))
 
-    list_editable = ['is_valid']
+    def save_model(self, request, obj, form, change):
+        obj.added_by = request.user
+        super().save_model(request, obj, form, change)
+
+    # list_editable = ['is_valid']
     exclude = ('is_valid',)
     actions = ['make_published']
     search_fields = ['name', 'id']
