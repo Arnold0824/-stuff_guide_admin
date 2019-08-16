@@ -49,6 +49,7 @@ class ContentView(View):
                     'headline':'',
                     'pub_date':''}
         else:
+            content_obj = content_obj[0]
             data = {
                 'content': content_obj.content,
                 'headline': content_obj.headline,
