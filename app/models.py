@@ -43,7 +43,7 @@ class Book(models.Model):
         category_set = self.category_set.all()
         data = []
         for x in category_set:
-            if x.farther:
+            if x.farther or not x.is_valid:
                 continue
             son = self.find_son(x, category_set)
             tmp = {'name': x.name, 'son': son, 'id': x.id, 'order_id': x.order, 'is_valid': x.is_valid,
