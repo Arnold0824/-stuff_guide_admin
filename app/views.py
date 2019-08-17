@@ -51,9 +51,9 @@ class ContentView(View):
         else:
             content_obj = content_obj[0]
             if '/media/' in content_obj.content:
-                content_obj.content.replace('/media/','http://122.112.211.152:8000/media/')
+                content = content_obj.content.replace('/media/','http://122.112.211.152:8000/media/')
             data = {
-                'content': content_obj.content,
+                'content': content,
                 'headline': content_obj.headline,
                 'pub_date': content_obj.pub_date,
                 'status':1
