@@ -18,7 +18,7 @@ class ContentAdmin(ModelAdmin):
 
     search_fields = ['headline', 'id']
     book_of_cate.short_description = '手册名'
-    raw_id_fields = ("cate",)
+    # raw_id_fields = ("cate",)
 
 
 @register(Category)
