@@ -52,6 +52,8 @@ class ContentView(View):
             content_obj = content_obj[0]
             if '/media/' in content_obj.content:
                 content = content_obj.content.replace('/media/','http://122.112.211.152:8000/media/')
+            else:
+                content = content_obj.content
             data = {
                 'content': content,
                 'headline': content_obj.headline,
