@@ -22,9 +22,9 @@ class Category(models.Model):
             if x.farther == self:
                 content = x.content_set.all()
                 if content:
-                    return content
+                    return content[0]
                 else:
-                    self.find_son_first_content(x)
+                    return x.find_son_first_content()
         return None
 
     class Meta:
