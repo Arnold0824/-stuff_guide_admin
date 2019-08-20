@@ -87,6 +87,7 @@ class SearchView(View):
         for x in cate_obj:
             data.append({
                 'cate_id': x.id,
+                'content_ids':x.get_all_content_ids(),
                 'name': x.name,
                 'pub_date': x.pub_date,
             })
