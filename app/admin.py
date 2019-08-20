@@ -23,7 +23,7 @@ class ContentAdmin(ModelAdmin):
 
 @register(Category)
 class CategoryAdmin(ModelAdmin):
-    list_display = ('name', 'book_of_cate', 'pub_date','content', 'is_valid')
+    list_display = ('name','farther', 'book_of_cate', 'pub_date','content', 'is_valid')
     def content(self,obj):
         content_name = obj.content_set.all()
         if content_name:
