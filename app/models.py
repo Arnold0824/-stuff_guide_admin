@@ -31,6 +31,9 @@ class Category(models.Model):
                     return x.find_son_first_content()
         return None
 
+    def get_all_content_ids(self):
+        all_content = Content.objects.filter(cate_id__exact=self.id).order_by('order')
+        return [x.id for x in all_content]
     class Meta:
         verbose_name = '目录'
         verbose_name_plural = '目录'
@@ -61,7 +64,7 @@ class Book(models.Model):
                 continue
             son = self.find_son(x, category_set)
             tmp = {'name': x.name, 'son': son, 'id': x.id, 'order_id': x.order, 'is_valid': x.is_valid,
-                   'pub_date': x.pub_date}
+                   'pub_date': x.pub_date,'content_ids':x.get_all_content_ids()}
             data.append(tmp)
         return data
 
@@ -71,7 +74,7 @@ class Book(models.Model):
             if cate_obj.id == x.farther_id:
                 son = self.find_son(x, all_cate_set)
                 data.append({'name': x.name, 'son': son, 'id': x.id, 'order_id': x.order, 'is_valid': x.is_valid,
-                             'pub_date': x.pub_date})
+                             'pub_date': x.pub_date, 'content_ids':x.get_all_content_ids()})
         return data
 
 
@@ -99,7 +102,7 @@ class Content(models.Model):
 
     def get_pre_next_content(self):
         all_content = Content.objects.filter(cate=self.cate).order_by('order')
-        index = self.get_index_of_queryset(self.cate, all_content)
+        index = self.get_index_of_queryset(self, all_content)
         leng = len(all_content)
         if index - 1 < 0:
             pre = None

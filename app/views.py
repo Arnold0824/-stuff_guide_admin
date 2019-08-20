@@ -41,8 +41,8 @@ class BookView(View):
 class ContentView(View):
     def get(self, request):
         params = request.GET
-        cate_id = int(params.get('cate_id'))
-        content_obj = Category.objects.filter(id=cate_id)
+        c_id = int(params.get('id'))
+        content_obj = Content.objects.filter(id=c_id)
         if not content_obj:
             data = {'status':-1,
                     'content':'',
@@ -50,18 +50,18 @@ class ContentView(View):
                     'pub_date':''}
         else:
             content_obj = content_obj[0]
-            if not content_obj.content_set.all():
-                content_obj = content_obj.find_son_first_content()
-
-            else:
-                content_obj = content_obj.content_set.all()[0]
-
-            if not content_obj:
-                data = {'status': -1,
-                        'content': '',
-                        'headline': '',
-                        'pub_date': ''}
-                return JsonResponse(data)
+            # if not content_obj.content_set.all():
+            #     content_obj = content_obj.find_son_first_content()
+            #
+            # else:
+            #     content_obj = content_obj.content_set.all()[0]
+            #
+            # if not content_obj:
+            #     data = {'status': -1,
+            #             'content': '',
+            #             'headline': '',
+            #             'pub_date': ''}
+            #     return JsonResponse(data)
 
             if '/media/' in content_obj.content:
                 content = content_obj.content.replace('/media/','http://122.112.211.152:8000/media/')
