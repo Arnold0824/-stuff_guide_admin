@@ -25,9 +25,9 @@ class ContentAdmin(ModelAdmin):
 class CategoryAdmin(ModelAdmin):
     list_display = ('name','farther', 'book_of_cate', 'pub_date','content', 'is_valid')
     def content(self,obj):
-        content_name = obj.content_set.all()
+        content_name = obj.content_set.all().order_by('order')
         if content_name:
-            content_name = content_name[0]
+            content_name = [x.headline for x in content_name]
         else:
             content_name = '暂无详细内容'
         return ("%s" % (content_name))

@@ -17,10 +17,14 @@ class Category(models.Model):
         return self.name
 
     def find_son_first_content(self):
+        content = self.content_set.all().order_by('order')
+        if content:
+            return content[0]
+
         all_cate = self.book.category_set.all().order_by('order')
         for x in all_cate:
             if x.farther == self:
-                content = x.content_set.all()
+                content = x.content_set.all().order_by('order')
                 if content:
                     return content[0]
                 else:
@@ -88,6 +92,7 @@ class Content(models.Model):
     pub_date = models.DateTimeField('发布时间', auto_now_add=True)
     headline = models.CharField('标题', max_length=200)
     content = RichTextUploadingField('手册内容')
+    order = models.IntegerField('排列顺序-升序',default=0)
 
     def __str__(self):
         return self.headline
