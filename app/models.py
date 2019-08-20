@@ -89,10 +89,10 @@ class Tag(models.Model):
 
 class Content(models.Model):
     cate = models.ForeignKey('Category', verbose_name='所属目录', on_delete=models.CASCADE, db_index=True)
+    order = models.IntegerField('排列顺序-升序',default=0)
     pub_date = models.DateTimeField('发布时间', auto_now_add=True)
     headline = models.CharField('标题', max_length=200)
     content = RichTextUploadingField('手册内容')
-    order = models.IntegerField('排列顺序-升序',default=0)
 
     def __str__(self):
         return self.headline
