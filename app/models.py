@@ -98,7 +98,7 @@ class Content(models.Model):
         return self.headline
 
     def get_pre_next_content(self):
-        all_content = Category.objects.filter(farther=self.cate.farther).order_by('order')
+        all_content = Content.objects.filter(cate=self.cate).order_by('order')
         index = self.get_index_of_queryset(self.cate, all_content)
         leng = len(all_content)
         if index - 1 < 0:
