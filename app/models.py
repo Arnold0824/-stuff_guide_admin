@@ -16,15 +16,25 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
-
+    def find_son_first_content(self):
+        all_cate = self.book.category_set.all().order_by('order')
+        for x in all_cate:
+            if x.farther == self:
+                content = x.content_set.all()
+                if content:
+                    return content
+                else:
+                    self.find_son_first_content(x)
+        return None
 
     class Meta:
         verbose_name = '目录'
         verbose_name_plural = '目录'
         ordering = ['order']
         permissions = [
-                    ("valid_category", "可以审核"),
-                ]
+            ("valid_category", "可以审核"),
+        ]
+
 
 class Book(models.Model):
     name = models.CharField('手册', max_length=70)
@@ -40,7 +50,7 @@ class Book(models.Model):
         verbose_name_plural = '手册'
 
     def get_all_cate(self):
-        category_set = self.category_set.all()
+        category_set = self.category_set.all().order_by('order')
         data = []
         for x in category_set:
             if x.farther or not x.is_valid:
@@ -81,6 +91,26 @@ class Content(models.Model):
 
     def __str__(self):
         return self.headline
+
+    def get_pre_next_content(self):
+        all_content = Category.objects.filter(farther=self.cate.farther).order_by('order')
+        index = self.get_index_of_queryset(self.cate, all_content)
+        leng = len(all_content)
+        if index - 1 < 0:
+            pre = None
+        else:
+            pre = all_content[index - 1].id
+        if index + 1 >= leng:
+            next = None
+        else:
+            next = all_content[index + 1].id
+        return pre, next
+
+    def get_index_of_queryset(self, a, all):
+        for i, x in enumerate(all, 0):
+            if x == a:
+                return i
+        return -1
 
     class Meta:
         verbose_name = '手册内容'

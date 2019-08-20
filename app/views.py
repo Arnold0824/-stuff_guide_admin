@@ -42,7 +42,7 @@ class ContentView(View):
     def get(self, request):
         params = request.GET
         cate_id = int(params.get('cate_id'))
-        content_obj = Content.objects.filter(cate_id__exact=cate_id)
+        content_obj = Category.objects.filter(id=cate_id)
         if not content_obj:
             data = {'status':-1,
                     'content':'',
@@ -50,15 +50,31 @@ class ContentView(View):
                     'pub_date':''}
         else:
             content_obj = content_obj[0]
+            if not content_obj.content_set.all():
+                content_obj = content_obj.find_son_first_content()
+
+            else:
+                content_obj = content_obj.content_set.all()[0]
+
+            if not content_obj:
+                data = {'status': -1,
+                        'content': '',
+                        'headline': '',
+                        'pub_date': ''}
+                return JsonResponse(data)
+
             if '/media/' in content_obj.content:
                 content = content_obj.content.replace('/media/','http://122.112.211.152:8000/media/')
             else:
                 content = content_obj.content
+            pre, next = content_obj.get_pre_next_content()
             data = {
                 'content': content,
                 'headline': content_obj.headline,
                 'pub_date': content_obj.pub_date,
-                'status':1
+                'status':1,
+                'pre': pre,
+                'next': next,
             }
         return JsonResponse(data)
 
