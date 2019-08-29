@@ -4,6 +4,7 @@ from django.views import View
 from django.views.generic import ListView
 from app.models import *
 from django.db.models import Q
+from django.conf import settings
 
 # Create your views here.
 
@@ -50,21 +51,8 @@ class ContentView(View):
                     'pub_date':''}
         else:
             content_obj = content_obj[0]
-            # if not content_obj.content_set.all():
-            #     content_obj = content_obj.find_son_first_content()
-            #
-            # else:
-            #     content_obj = content_obj.content_set.all()[0]
-            #
-            # if not content_obj:
-            #     data = {'status': -1,
-            #             'content': '',
-            #             'headline': '',
-            #             'pub_date': ''}
-            #     return JsonResponse(data)
-
             if '/media/' in content_obj.content:
-                content = content_obj.content.replace('/media/','http://122.112.211.152:8000/media/')
+                content = content_obj.content.replace('/media/',settings.HOST_NAME + settings.MEDIA_URL)
             else:
                 content = content_obj.content
             pre, next = content_obj.get_pre_next_content()

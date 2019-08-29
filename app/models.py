@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.conf import settings
 
 
 class Category(models.Model):
@@ -12,6 +13,7 @@ class Category(models.Model):
     order = models.IntegerField('排列顺序-升序')
     book = models.ForeignKey('Book', verbose_name='所属手册', on_delete=models.CASCADE)
     is_valid = models.IntegerField('是否审核通过', choices=((1, '审核通过'), (0, '未审核')), default=0)
+    icon = models.ImageField('目录图标', upload_to='icon/', default='', null=True)
 
     def __str__(self):
         return self.name
@@ -63,8 +65,9 @@ class Book(models.Model):
             if x.farther or not x.is_valid:
                 continue
             son = self.find_son(x, category_set)
+            icon_path = settings.HOST_NAME + settings.MEDIA_URL + x.icon.name if x.icon else ''
             tmp = {'name': x.name, 'son': son, 'id': x.id, 'order_id': x.order, 'is_valid': x.is_valid,
-                   'pub_date': x.pub_date,'content_ids':x.get_all_content_ids()}
+                   'pub_date': x.pub_date,'content_ids':x.get_all_content_ids(),'icon':icon_path}
             data.append(tmp)
         return data
 
@@ -73,8 +76,9 @@ class Book(models.Model):
         for x in all_cate_set:
             if cate_obj.id == x.farther_id:
                 son = self.find_son(x, all_cate_set)
+                icon_path = settings.HOST_NAME + settings.MEDIA_URL + x.icon.name if x.icon else ''
                 data.append({'name': x.name, 'son': son, 'id': x.id, 'order_id': x.order, 'is_valid': x.is_valid,
-                             'pub_date': x.pub_date, 'content_ids':x.get_all_content_ids()})
+                             'pub_date': x.pub_date, 'content_ids':x.get_all_content_ids(),'icon':icon_path})
         return data
 
 

@@ -147,3 +147,5 @@ CKEDITOR_CONFIGS = {
         ),
     }
 }
+
+HOST_NAME = 'https://www.pcberp.net'
