@@ -15,10 +15,11 @@ class BookView(View):
         if not book_id:
             data = []
             for x in Book.objects.all():
+                img_path = settings.HOST_NAME + settings.MEDIA_URL + x.cover_img.name if x.cover_img else ''
                 data.append({
                     'book_id': x.id,
                     'name': x.name,
-                    'cover_img': x.cover_img.name,
+                    'cover_img': img_path,
                     'pub_date': x.pub_date,
                     'all_cate': x.get_all_cate(),
                     # ''
